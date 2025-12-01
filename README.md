@@ -26,3 +26,14 @@ cp .env.example .env
 # Edit .env and add your OPENAI_API_KEY
 ```
 
+### Start Server
+
+
+
+```
+python -m src.main
+```
+or
+```
+uvicorn src.main:app --host 127.0.0.1 --port 8000 --reload
+```

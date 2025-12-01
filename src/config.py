@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     openai_base_url: str = "https://api.openai.com/v1"
     
     # Server Configuration
-    host: str = "0.0.0.0"
+    host: str = "127.0.0.1"
     port: int = 8000
     
     # LLM Configuration

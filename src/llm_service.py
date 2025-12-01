@@ -48,13 +48,23 @@ async def get_llm_response(user_text: str) -> str:
 
     # Using async to call the OpenAI Chat Completion
     async with httpx.AsyncClient(timeout=settings.request_timeout) as client:
+        try:
+            # Performing the async POST request
+            response = await client.post(url, headers=headers, json=payload)
 
-        # Perfoming the async POST request
-        response = await client.post(url, headers=headers, json=payload)
+            # If any responses like 2xx, 4xx response raise
+            response.raise_for_status()
 
-        # If any responses like 2xx response raise
-        response.raise_for_status()
+            # Return the response content
+            data = response.json()
+            return data["choices"][0]["message"]["content"]
 
-        # return the response
-        data = response.json()
-        return data["choices"][0]["message"]["content"]
+        except httpx.HTTPStatusError as e:
+            print(f"HTTP error occurred: {e.response.status_code} {e.response.reason_phrase}")
+            print(f"Error details: {e.response.text}")
+            # Optionally, re-raise the exception if you want to stop execution here
+            # raise
+        except Exception as e:
+            print(f"An unexpected error occurred: {str(e)}")
+            # Optionally, re-raise here also
+            # raise
