@@ -39,6 +39,8 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env and replace with your OPENAI_API_KEY=sk-your-key
 ```
+**OpenAI API Platform:**
+Open `https://platform.openai.com/api-keys`
 
 ## Running the app
 
