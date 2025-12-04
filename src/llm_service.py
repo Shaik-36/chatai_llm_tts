@@ -1,5 +1,5 @@
 """
-LLM Service - Call OpenAI Chat API
+LLM Service - Calls OpenAI Chat Endpoint
 """
 
 import httpx
@@ -7,19 +7,10 @@ from src.config import settings
 
 
 async def get_llm_response(user_text: str) -> str:
-    """
-    Call OpenAI Chat Completions API.
-    
-    Args:
-        user_text: User's input text
-    
-    Returns:
-        Generated response from LLM
-    
-    Raises:
-        Exception: On API errors or parsing failures
-    """
-    
+
+    #================ Build Parameters to send to Chat Endpoint ==================
+    # API DOCs : https://platform.openai.com/docs/api-reference/responses/create
+
     url = f"{settings.openai_base_url}/chat/completions"
     
     headers = {
@@ -37,6 +28,7 @@ async def get_llm_response(user_text: str) -> str:
         "temperature": settings.llm_temperature
     }
     
+    #================ POST Message to LLM Endpoint and return response ==================
     try:
         async with httpx.AsyncClient(timeout=settings.request_timeout) as client:
             response = await client.post(url, headers=headers, json=payload)
@@ -44,6 +36,7 @@ async def get_llm_response(user_text: str) -> str:
             data = response.json()
             return data["choices"][0]["message"]["content"]
     
+    #================================ Handle Exceptions =================================
     except httpx.HTTPStatusError as e:
         raise Exception(f"OpenAI API error: {e.response.status_code}")
     except (KeyError, IndexError) as e:

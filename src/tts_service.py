@@ -1,24 +1,18 @@
 """
-TTS Service - Call OpenAI Text-to-Speech API
+Text to Speech (TTS) Service - Calls OpenAI Text-to-Speech Endpoint
 """
 
 import httpx
 from src.config import settings
 
+# ================================================================
+#  Text to Speech Service - Sends LLM Text and receive Audio
+# ================================================================
 
 async def get_tts_audio(text: str) -> bytes:
-    """
-    Call OpenAI TTS API to generate audio.
-    
-    Args:
-        text: Text to convert to speech
-    
-    Returns:
-        Audio bytes (MP3 format)
-    
-    Raises:
-        Exception: On API errors
-    """
+
+    #================ Build Parameters to send to TTS Endpoint ==================
+    # API DOCs : https://platform.openai.com/docs/api-reference/audio/createSpeech
     
     url = "https://api.openai.com/v1/audio/speech"
     
@@ -34,12 +28,14 @@ async def get_tts_audio(text: str) -> bytes:
         "Content-Type": "application/json"
     }
     
+    #============  POST Message to TTS Endpoint and return response ==============
     try:
         async with httpx.AsyncClient(timeout=settings.request_timeout) as client:
             response = await client.post(url, json=payload, headers=headers)
             response.raise_for_status()
             return response.content
     
+    #=============================  Handle Exceptions ==============================
     except httpx.HTTPStatusError as e:
         raise Exception(f"OpenAI TTS error: {e.response.status_code}")
     except httpx.TimeoutException:
